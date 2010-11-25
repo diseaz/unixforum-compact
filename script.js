@@ -1,15 +1,9 @@
 // ==UserScript==
 // @name           unixforum-compact
 // @namespace      watashiwa_daredeska@unixforum.org
-// @description    Делает тему TextGray на unixforum.org ещё более компактной.
-//                  - Убирает левую панель: часть информации переносится в выпадающее меню о
-//                    пользователе, часть -- в верхнюю строку информации о сообщении.
-//                  - Ссылки из нижней панели переносятся в верхнюю.
-//                  - Ссылки в верхней панели переименовываются в компактный вид.
-//                  - Подписи скрываются, в верхней панели появляется ссылка [S]: показать/спрятать
-//                    подпись.
+// @description    Делает интерфейс unixforum.org более компактным.
 // @include        http://unixforum.org/index.php?*showtopic=*
-// @version        0.1.12
+// @version        0.1.13
 // ==/UserScript==
 
 function xpathList(path, root) {
@@ -57,11 +51,28 @@ function main() {
 
     // Apply custom styles
     GM_addStyle(".normalname { white-space: nowrap; }");
-    GM_addStyle(".postcolor p{" +
-                "background: transparent !important;" +
-                "border: 0 !important;" +
-                "margin: 12px 0 !important;" +
-                "padding: 0 !important;}");
+    GM_addStyle(".postcolor p {" +
+                "background: transparent;" +
+                "border: 0;" +
+                "margin: 12px 0;" +
+                "padding: 0;}");
+    GM_addStyle(".postcolor .quote {" +
+                "background: #fafcfe;" +
+                "border: 1px dotted black;" +
+                "border-left: 4px solid #727272;" +
+                "margin: 0px auto;" +
+                "padding: 4px;" +
+                "}");
+    GM_addStyle(".postcolor .quote h3 {" +
+                "background: #ececec;" +
+                "border: 0;" +
+                "color: black;" +
+                "font-size: 10px;" +
+                "font-weight: bold;" +
+                "margin: -4px 0 0 -4px;" +
+                "padding: 3px;" +
+                "width: 100%;" +
+                "}");
     var postClasses = [".post1", ".post2", ".post1shaded", ".post2shaded"];
     for (var i = 0; i < postClasses.length; i++) {
         var postClass = postClasses[i];
@@ -217,6 +228,12 @@ function main() {
             spanLink.appendChild(anchorElem);
             postdetails.appendChild(spanLink);
             anchorElem.addEventListener("click", makeClickHandler(anchorElem, divSignature), false);
+        }
+
+        // Remove leading and trailing <BR> in rssbot's quotes
+        var br = xpathNode("//p/*[position() = 1 or last()][self::br]", thisPost);
+        if (br) {
+            br.parentElement.removeChild(br);
         }
     }
 
