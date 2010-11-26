@@ -110,7 +110,7 @@ function main() {
             author_span.textContent = "T";
             author_span.className = "author-mark";
             user_button.appendChild(author_span);
-            author.parentElement.removeChild(author);
+            author.parentNode.removeChild(author);
         }
 
         // Move contents to a new node except redundant BRs.
@@ -249,7 +249,7 @@ function main() {
         // Remove leading and trailing <BR> in rssbot's quotes
         var br = xpathNode(".//p/*[position() = 1 or last()][self::br]", thisPost);
         if (br) {
-            br.parentElement.removeChild(br);
+            br.parentNode.removeChild(br);
         }
     }
 
