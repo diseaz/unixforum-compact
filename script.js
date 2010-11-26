@@ -73,11 +73,15 @@ function main() {
                 "padding: 3px;" +
                 "width: 100%;" +
                 "}");
+    GM_addStyle(".author-mark {" +
+                "color: green;" +
+                "font-weight: bold;" +
+                "}");
     var postClasses = [".post1", ".post2", ".post1shaded", ".post2shaded"];
     for (var i = 0; i < postClasses.length; i++) {
         var postClass = postClasses[i];
-        GM_addStyle(postClass + " a{color:#00e !important;}" + postClass +
-                    "a:visited{color:#551A8B !important;}");
+        GM_addStyle(postClass + " a{color:#00e;}" + postClass +
+                    "a:visited{color:#551A8B;}");
     }
 
     var forumPosts = xpathList(
@@ -96,6 +100,18 @@ function main() {
                                     thisPost);
         var postdetails = xpathNode("./tbody/tr[1]/td[2]/div[2]//span[@class='postdetails']",
                                     thisPost);
+        var user_button = xpathNode(".//div[@class = 'popmenubutton-new-out']",
+                                    thisPost);
+
+        // Set a 'Topic author' indicator.
+        var author = xpathNode(".//b[string() = 'Автор темы']", leftdetails);
+        if (author) {
+            var author_span = document.createElement("span");
+            author_span.textContent = "T";
+            author_span.className = "author-mark";
+            user_button.appendChild(author_span);
+            author.parentElement.removeChild(author);
+        }
 
         // Move contents to a new node except redundant BRs.
         var newItemContents = document.createElement("span");
@@ -231,7 +247,7 @@ function main() {
         }
 
         // Remove leading and trailing <BR> in rssbot's quotes
-        var br = xpathNode("//p/*[position() = 1 or last()][self::br]", thisPost);
+        var br = xpathNode(".//p/*[position() = 1 or last()][self::br]", thisPost);
         if (br) {
             br.parentElement.removeChild(br);
         }
